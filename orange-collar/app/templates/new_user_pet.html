@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Register Your Pet</h1>
+    <h3>Keep your pets safe by signing them up to our database</h3>
+    
+    <form action="/new_user_pet", method="POST", name="new_user_pet">
+        {{ form.hidden_tag() }}
+        <p>
+            <input type="name" name="name" placeholder="Name"><br>
+            <input type="text" name="species" placeholder="Cat? Dog? Bird?"><br>
+            <input type="color" name="color" placeholder="Color"><br>
+            <input type="text" name="breed" placeholder="Breed"><br>
+            
+            <select name="gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Male Neutered">Male - Neutered</option>
+                <option value="Female Spayed">Female - Spayed</option>
+                <option value="Unknown">Unknown</option>
+                <option value="I Never Asked, and It Would Be Awkward At This Point">
+                    I Never Asked, and It Would Be Awkward At This Point
+                </option>
+            </select><br>
+            
+            <input type="text" name="description" placeholder="Tell us about your pet"><br>
+            Is this an Indoor Pet Only? <input type="checkbox" name="indoor_pet"><br>
+            
+            Pet Status<br>
+            <select name="status">
+                <option value="Home">Home</option>
+                <option value="Lost">Lost</option>
+                <option value="Unknown">Unknown</option>
+            </select><br>
+            
+            <input type="text" name="additional_info" placeholder="Anything you need us to know about your pet's status?"><br>
+            <input type="text" name="home_address" placeholder="Home Address"><br>
+        </p>
+        
+        <p><input type="submit" value="Register"></p>
+    </form>
+
+{% endblock %}

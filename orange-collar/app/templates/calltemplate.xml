@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Say voice="alice">
+        Hello, {{ user.name }}. Your {{ pet.species }}, {{ pet.name }}, was reported in your area. Please log in to Orange Collar to update your pet's status. Have a great day.
+    </Say>
+    <Play>http://demo.twilio.com/docs/classic.mp3</Play>
+</Response>

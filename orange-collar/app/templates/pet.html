@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>{{ pet.name }}'s Profile</h1>
+    
+    <form action="{{ url_for('pet_profile', petID=pet.id) }}", method="POST", name="pet_profile">
+        {{ form.hidden_tag() }}
+        <p><input type="submit" value="Contact Owner"></p>
+    </form>
+    
+    <p>I am an {% if pet.indoor_pet %} INDOOR {% else %} OUTDOOR {% endif %} pet</p>
+    
+    <div id="pet_status">
+        I am currently: 
+        
+        {% if pet.status == "Lost" %}
+            <h2>LOST</h2>
+            <p>Notify my owner if you have seen me by pressing Contact Owner.</p>
+        {% else %}
+            <p>At Home, but I may be lost if you are seeing me, now. Help me by contacting my owner.</p>
+        {% endif %}
+    </div>
+    
+    <div id="profile">
+        <p>{{ pet.species}}</p>
+        <p>{{ pet.color }}</p>
+        <p>{{ pet.breed }}</p>
+        <p>Owner: 
+            {% if user.name %} 
+                {{ user.name }} 
+            {% else %} 
+                Unknown - Help me by signing in!
+            {% endif %}
+        </p>
+        <p>Address: {{ pet.home_address }}</p>
+        <p>Phone: {{ user.primary_phone }}</p>
+    </div>
+    
+    <div id="profile_map">
+        <!-- Filler until Google Map implemented -->
+    </div>
+    
+{% endblock %}
