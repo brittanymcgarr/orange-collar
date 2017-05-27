@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>{{ user.name }}'s Profile</h1>
+    <h3>{{ user.email }}</h3>
+    
+    <div id="profile">
+        <p>Address: {{ user.primary_address }}</p>
+        <p>Phone: {{ user.primary_phone }}</p>
+        
+        {% if user.allow_call or user.allow_mms or user.allow_sms %}
+            <p>You have opted into:
+                <ul>
+                    {% if user.allow_call %}
+                        <li>Voice Messages</li>
+                    {% endif %}
+                    {% if user.allow_sms %}
+                        <li>Text Messages (SMS)</li>
+                    {% endif %}
+                    {% if user.allow_mms %}
+                        <li>Multimedia Messages (MMS)</li>
+                    {% endif %}
+                </ul>
+            </p>
+        {% endif %}
+    </div>
+    
+    <div id="profile_map">
+        <!-- Filler until Google Map implemented -->
+    </div>
+    
+    <div id="user_pets">
+        <h2>{{ user.name }}'s Pets</h2>
+        
+        <ul>
+            {% for pet in pets %}
+                <li><a href="{{ url_for('pet_profile', petID=pet.id) }}">{{ pet.name }}</a></li>
+            {% endfor %}
+        </ul>
+        
+        <br>
+        <p>
+            <a href="{{ url_for('new_user_pet') }}">Register Your Pet</a>
+        </p>
+    </div>
+    
+{% endblock %}

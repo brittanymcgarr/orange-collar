@@ -1,0 +1,43 @@
+<html>
+
+    <head>
+      
+        <title>
+            Orange Collar
+            {% if title != '' %}
+                 - {{ title }}
+            {% endif %}
+        </title>
+    </head>
+    
+    <body>
+        <h1>Orange Collar</h1>
+        <h3>Your Neighborhood Watch for Pets</h3>
+        
+        <div id="menu">
+            <div id="menu-option"><a href="/index">Home</a></div>
+            
+            <div id="menu-option">
+                {% if g.user.is_authenticated %}
+                    <a href="{{ url_for('logout') }}">Log Out</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Log In</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <hr>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </body>
+
+</html>
