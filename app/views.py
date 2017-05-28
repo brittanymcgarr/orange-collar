@@ -227,14 +227,9 @@ def sendCall(pet, user, message="Your pet has been reported.", phone=""):
         account_sid = str(os.getenv('TWILIO_SID'))
         auth_token = str(os.getenv('TWILIO_AUTH_TOKEN'))
         local_phone = str(os.getenv('OC_PHONE'))
-
-        if os.getenv('HEROKU') == '1':
-            host = "http://orange-collar.herokuapp.com"
-        else:
-            host = "0.0.0.0"
         
         url = url_for('calltemplate', petID=pet.id)
-        url = host + url
+        url = "http://orange-collar.herokuapp.com" + url
 
         client = Client(account_sid, auth_token)
         call = client.calls.create(to = "+1%s" % phone,
@@ -242,7 +237,7 @@ def sendCall(pet, user, message="Your pet has been reported.", phone=""):
                                    url = url)
 
 # Create XML
-@app.route('/calltemplate.xml/<petID>')
+@app.route('/calltemplate.xml/<petID>', methods=['GET', 'POST'])
 def calltemplate(petID):
     pet = Pet.query.get(petID)
     user = User.query.get(pet.user_id)
