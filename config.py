@@ -4,7 +4,6 @@ import os
 base_directory = os.path.abspath(os.path.dirname(__file__))
 
 # WTForms
-# Note: Secret key should be set in Heroku variables when deploying
 WTF_CSRF_ENABLED = True
 SECRET_KEY = str(os.getenv('WTF_SECRET'))
 

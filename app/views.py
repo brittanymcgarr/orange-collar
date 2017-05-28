@@ -20,7 +20,7 @@ def before_request():
 def index():
     user = g.user
     
-    if user is "" or None:
+    if user is None:
         user = {'name': None}
     
     return render_template('index.html', title='', user=user)
@@ -28,6 +28,9 @@ def index():
 # Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if g.user is not None and g.user.is_authenticated:
+        return redirect(url_for('index'))
+
     form = LoginForm()
     
     if form.validate_on_submit():
@@ -45,8 +48,7 @@ def login():
                 remember_me = session['remember_me']
                 session.pop('remember_me', None)
                         
-            user.authenticated = True
-            login_user(user)
+            login_user(user, remember = remember_me)
             flash("Successfully Logged In. Welcome back, %s!" % g.user.name)
             return redirect(url_for('dashboard'))
         else:
@@ -58,7 +60,6 @@ def login():
 # Logout
 @app.route('/logout')
 def logout():
-    g.user.authenticated = False
     logout_user()
     
     flash("Logged out")
@@ -66,8 +67,8 @@ def logout():
     
 # Load the user from the databse
 @lm.user_loader
-def user_loader(user_id):
-    return User.query.filter_by(email=user_id).first() or None
+def user_loader(email):
+    return User.query.filter_by(email=email).first() or None
     
 # Sign Up new users
 @app.route('/signup', methods=['GET', 'POST'])
