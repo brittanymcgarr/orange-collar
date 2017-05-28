@@ -98,7 +98,7 @@ def signup():
         db.session.commit()
         flash("Successfully created account. Welcome!")
     
-        login_user(user, remember=True)
+        login_user(user)
         return redirect(request.args.get('next') or url_for('dashboard'))
     
     return render_template('signup.html', title='Sign Up', form=form)
