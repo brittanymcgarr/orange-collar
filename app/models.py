@@ -13,7 +13,7 @@ class User(db.Model):
     primary_lat_coord = db.Column(db.Float(precision=8))
     primary_long_coord = db.Column(db.Float(precision=8))
     secondary_address = db.Column(db.String(255))
-    secondary_lat_coord = db.Column(db.Float(pricision=8))
+    secondary_lat_coord = db.Column(db.Float(precision=8))
     secondary_long_coord = db.Column(db.Float(precision=8))
 
     primary_phone = db.Column(db.String(11))
