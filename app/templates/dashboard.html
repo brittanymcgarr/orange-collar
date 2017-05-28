@@ -12,7 +12,7 @@
         {% if user.allow_call or user.allow_mms or user.allow_sms %}
             <p>You have opted into:
                 <ul>
-                    {% if user.allow_call %}
+                    {% if user.allow_voice %}
                         <li>Voice Messages</li>
                     {% endif %}
                     {% if user.allow_sms %}

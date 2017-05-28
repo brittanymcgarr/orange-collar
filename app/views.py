@@ -189,7 +189,7 @@ def reportPet(petID):
     
     if user is not None:
         if user.primary_phone is not "":
-            message = "Your pet, %s, was reported in the area. Log in to Orange Collar to change your pet's status." % pet.name
+            message = "Your %s, %s, was sighted in the area. Log in to Orange Collar to change your pet's status." % (pet.species, pet.name)
             
             #if user.allow_mms and pet.picture is not "":
             #    sendMMS(message, user.primary_phone, pet.picture)
