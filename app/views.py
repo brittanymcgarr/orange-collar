@@ -28,9 +28,6 @@ def index():
 # Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if g.user is not None and g.user.is_authenticated:
-        return redirect(url_for('dashboard'))
-    
     form = LoginForm()
     
     if form.validate_on_submit():
@@ -61,8 +58,9 @@ def login():
 # Logout
 @app.route('/logout')
 def logout():
-    logout_user()
     g.user.authenticated = False
+    logout_user()
+    
     flash("Logged out")
     return redirect(url_for('index'))
     
@@ -101,7 +99,7 @@ def signup():
     
         user.authenticated = True
         login_user(user)
-        return redirect(request.args.get('next') or url_for('dashboard'))
+        return redirect(url_for('dashboard'))
     
     return render_template('signup.html', title='Sign Up', form=form)
     
@@ -112,11 +110,12 @@ def dashboard():
     if g.user.is_authenticated:
         user = User.query.filter_by(email=g.user.email).first()
         pets = user.pets
-        return render_template('dashboard.html', title="Dashboard", 
+        return render_template('dashboard.html', title="Dashboard",
                                 user=user, pets=pets)
     else:
         flash("You need to be logged in to view your dashboard.")
-        return redirect(url_for('index'))
+        return render_template('dashboard.html', title="Dashboard",
+                                user={"name":None}, pets=[])
 
 # View a User Profile
 
