@@ -8,6 +8,10 @@ base_directory = os.path.abspath(os.path.dirname(__file__))
 WTF_CSRF_ENABLED = True
 SECRET_KEY = str(os.getenv('WTF_SECRET'))
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(base_directory, 'app.db')
+if os.environ.get('HEROKU') == 1:
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+else:
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(base_directory, 'app.db')
+
 SQLALCHEMY_MIGRATE_REPO = os.path.join(base_directory, 'db_repository')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
