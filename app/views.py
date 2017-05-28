@@ -48,6 +48,7 @@ def login():
                 remember_me = session['remember_me']
                 session.pop('remember_me', None)
                         
+            user.authenticated = True
             login_user(user, remember=remember_me)
             flash("Successfully Logged In. Welcome back, %s!" % g.user.name)
             return redirect(request.args.get('next') or url_for('dashboard'))
@@ -98,6 +99,7 @@ def signup():
         db.session.commit()
         flash("Successfully created account. Welcome!")
     
+        user.authenticated = True
         login_user(user)
         return redirect(request.args.get('next') or url_for('dashboard'))
     
