@@ -90,7 +90,6 @@ def signup():
                     password_hash = password_hash, 
                     primary_phone = form.primary_phone.data,
                     primary_address = form.primary_address.data,
-                    secondary_phone = form.secondary_phone.data,
                     allow_mms = form.allow_mms.data,
                     allow_sms = form.allow_sms.data,
                     allow_voice = form.allow_voice.data)
@@ -98,9 +97,6 @@ def signup():
         db.session.add(user)
         db.session.commit()
         flash("Successfully created account. Welcome!")
-        
-        user.authenticated = True
-        current_user = user
     
         login_user(user, remember=True)
         return redirect(request.args.get('next') or url_for('dashboard'))
