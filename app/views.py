@@ -48,7 +48,7 @@ def login():
             user.authenticated = True
             login_user(user)
             flash("Successfully Logged In. Welcome back, %s!" % g.user.name)
-            return redirect(request.args.get('next') or url_for('dashboard'))
+            return redirect(url_for('dashboard'))
         else:
             flash("Password was not valid. Try again or contact an admin.")
             return redirect(url_for('login'))
