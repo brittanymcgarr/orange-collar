@@ -31,7 +31,7 @@ class User(db.Model):
     
     @property
     def is_authenticated(self):
-        return self.authenticated
+        return True
       
     @property
     def is_active(self):

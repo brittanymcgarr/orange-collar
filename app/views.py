@@ -46,7 +46,7 @@ def login():
                 session.pop('remember_me', None)
                         
             user.authenticated = True
-            login_user(user, remember=remember_me)
+            login_user(user)
             flash("Successfully Logged In. Welcome back, %s!" % g.user.name)
             return redirect(request.args.get('next') or url_for('dashboard'))
         else:
@@ -67,7 +67,7 @@ def logout():
 # Load the user from the databse
 @lm.user_loader
 def user_loader(user_id):
-    return User.query.filter_by(email=user_id).first()
+    return User.query.filter_by(email=user_id).first() or None
     
 # Sign Up new users
 @app.route('/signup', methods=['GET', 'POST'])
