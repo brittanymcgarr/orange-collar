@@ -26,7 +26,6 @@ colorama==0.2.5
 configobj==4.7.2
 coverage==4.4.1
 decorator==3.4.0
-duplicity==0.6.23
 flipflop==1.0
 guess-language==0.2
 gunicorn==19.7.1
