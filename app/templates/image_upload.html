@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <form action="{{ url_for('image_upload', petID=petID) }}" enctype="multipart/form-data" method="POST" name="image_upload">
+        {{ form.hidden_tag() }}
+        
+        <p>
+            <input type="file" name="file"><br>
+        </p>
+        
+        <p><input type="submit" value="Upload Image"></p>
+    </form>
+    
+{% endblock %}

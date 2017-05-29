@@ -70,6 +70,7 @@ class Pet(db.Model):
     secondary_address = db.Column(db.String(255))
     
     sighting_coords = db.Column(db.Text)
+    picture = db.Column(db.String(200), default="")
     
     def __repr__(self):
         return '<Pet %r_%s>' % (self.name, self.id)

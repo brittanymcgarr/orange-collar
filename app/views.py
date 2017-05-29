@@ -1,10 +1,14 @@
-from flask import (render_template, flash, redirect, session, url_for, 
-                   request, g, abort, Response)
-from flask_login import login_user, logout_user, current_user, login_required
 import bcrypt
 import os
+import datetime
+
+from flask_login import login_user, logout_user, current_user, login_required
+from flask import (render_template, flash, redirect, session, url_for, 
+                   request, g, abort, Response)
+from werkzeug.utils import secure_filename
+
 from app import app, db, lm
-from .forms import LoginForm, SignUpForm, ContactForm, NewPetForm
+from .forms import LoginForm, SignUpForm, ContactForm, NewPetForm, EditForm, ImageForm
 from .models import User, Pet
 
 from twilio.rest import Client
@@ -92,8 +96,11 @@ def signup():
                     primary_address = form.primary_address.data,
                     allow_mms = form.allow_mms.data,
                     allow_sms = form.allow_sms.data,
-                    allow_voice = form.allow_voice.data)
-    
+                    allow_voice = form.allow_voice.data,
+                    last_mms = datetime.datetime.now(),
+                    last_sms = datetime.datetime.now(),
+                    last_call = datetime.datetime.now())
+                    
         db.session.add(user)
         db.session.commit()
         flash("Successfully created account. Welcome!")
@@ -118,7 +125,24 @@ def dashboard():
         return render_template('dashboard.html', title="Dashboard",
                                 user={"name":None}, pets=[])
 
-# View a User Profile
+# Edit a User Profile
+@app.route('/edit', methods=['GET', 'POST'])
+def edit():
+    form = EditForm()
+    user = User.query.get(g.user.id)
+    
+    if g.user.is_authenticated and user is not None:
+        if form.validate_on_submit():
+            form.populate_obj(user)
+            db.session.add(user)
+            db.session.commit()
+        
+            return redirect(url_for('dashboard'))
+        
+        return render_template('edit_user.html', title="Edit User", user=g.user, form=form)
+    else:
+        flash("You must be logged in to edit your profile")
+        return redirect(url_for('login'))
 
 # Create a Pet Profile for a User's Pet
 @app.route('/new_user_pet', methods=['GET', 'POST'])
@@ -138,9 +162,18 @@ def new_user_pet():
                       home_address = form.home_address.data,
                       user_id = g.user.get_id())
             
+            file = request.files[form.additional_info.data]
+                
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                
+                pet.additional_info = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            
             db.session.add(pet)
             current_user.pets.append(pet)
             db.session.commit()
+            
             flash("Successfully registered your pet. Good Work!")
             return redirect(request.args.get('next') or url_for('dashboard'))
         
@@ -149,6 +182,34 @@ def new_user_pet():
     else:
         flash("You need to be logged in to set your own pets or try Report a Sighted Pet")
         return redirect(url_for('index'))
+
+# Upload an image for the pet
+@app.route('/image-upload/<petID>', methods=['GET', 'POST'])
+def image_upload(petID):
+    if request.method == 'POST':
+        form = ImageForm(request.form)
+        
+        if form.validate_on_submit():
+            pet = Pet.query.get(petID) or None
+            
+            if pet is not None:
+                image_file = request.files['file']
+                filename = os.path.join(app.config['IMAGES_DIR'], secure_filename(image_file.filename))
+                image_file.save(filename)
+                pet.picture = image_file.filename
+                
+                db.session.add(pet)
+                db.session.commit()
+                
+                flash('Saved %s' % os.path.basename(filename), 'success')
+                return redirect(url_for('pet_profile', petID=pet.id))
+        else:
+            flash("Unable to locate the requested pet to upload file.")
+            return redirect(url_for('dashboard'))
+    else:
+        form = ImageForm()
+
+    return render_template('image_upload.html', title="Upload a Picture", petID=petID, form=form)
 
 # Create a Pet Profile for a found Pet
 
@@ -194,9 +255,18 @@ def reportPet(petID):
             #if user.allow_mms and pet.picture is not "":
             #    sendMMS(message, user.primary_phone, pet.picture)
             if user.allow_sms:
-                sendSMS(message, user.primary_phone)
+                if user.last_sms + datetime.timedelta(minutes = 10) < datetime.datetime.now():
+                    sendSMS(message, user.primary_phone)
+                
             if user.allow_voice:
-                sendCall(pet, user, message, user.primary_phone)
+                if user.last_call + datetime.timedelta(minutes = 10) < datetime.datetime.now():
+                    sendCall(pet, user, message, user.primary_phone)
+            
+            time = datetime.datetime.now()
+            user.last_mms = time
+            user.last_sms = time
+            user.last_call = time
+            db.session.commit()
             
             flash("The owner is being contacted. Thank you for doing your part!")
         else:
@@ -246,3 +316,7 @@ def calltemplate(petID):
         response_page = render_template('/calltemplate.xml', pet=pet, user=user)
         return Response(response_page, mimetype='text/xml')
     
+# Check permissible file types
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']

@@ -9,6 +9,12 @@
         <p><input type="submit" value="Contact Owner"></p>
     </form>
     
+    {% if pet.picture != "" and pet.picture != None %}
+        <a href="{{ url_for('image_upload', petID=pet.id) }}"><img src="/static/images/{{ pet.picture }}" alt="Pet Picture" title="Change your pet's picture" style="max-width:500px;max-height:500px;"></a>
+    {% else %}
+        <a href="{{ url_for('image_upload', petID=pet.id) }}"><img src="/static/icons/orangecollar.png" alt="Pet Picture" title="Change your pet's picture" style="max-width:500px;max-height:500px;"></a>
+    {% endif %}
+    
     <p>I am an {% if pet.indoor_pet %} INDOOR {% else %} OUTDOOR {% endif %} pet</p>
     
     <div id="pet_status">

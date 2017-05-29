@@ -17,14 +17,20 @@
         <div id="menu">
             <div id="menu-option"><a href="/index">Home</a></div>
             
-            <div id="menu-option">
-                {% if g.user.is_authenticated %}
+            {% if g.user.is_authenticated %}
+                <div id="menu-option">
                     <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                </div>
+                
+                <div id="menu-option">
                     <a href="{{ url_for('logout') }}">Log Out</a>
-                {% else %}
+                </div>
+            {% else %}
+                <div id="menu-option">
                     <a href="{{ url_for('login') }}">Log In</a>
-                {% endif %}
-            </div>
+                </div>
+            {% endif %}
+            
         </div>
         
         <hr>

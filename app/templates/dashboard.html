@@ -5,6 +5,12 @@
     <h1>{{ user.name }}'s Profile</h1>
     <h3>{{ user.email }}</h3>
     
+    <!--
+    <div id="edit-user">
+        <a href="{{ url_for('edit') }}">Edit</a>
+    </div>
+    -->
+    
     <div id="profile">
         <p>Address: {{ user.primary_address }}</p>
         <p>Phone: {{ user.primary_phone }}</p>
