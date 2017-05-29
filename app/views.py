@@ -246,12 +246,10 @@ def reportPet(petID):
             #if user.allow_mms and pet.picture is not "":
             #    sendMMS(message, user.primary_phone, pet.picture)
             if user.allow_sms:
-                if user.last_sms + datetime.timedelta(minutes = 10) < datetime.datetime.now():
-                    sendSMS(message, user.primary_phone)
+                sendSMS(message, user.primary_phone)
                 
             if user.allow_voice:
-                if user.last_call + datetime.timedelta(minutes = 10) < datetime.datetime.now():
-                    sendCall(pet, user, message, user.primary_phone)
+                sendCall(pet, user, message, user.primary_phone)
             
             time = datetime.datetime.now()
             user.last_mms = time
