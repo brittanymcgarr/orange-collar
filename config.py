@@ -15,6 +15,6 @@ else:
 SQLALCHEMY_MIGRATE_REPO = os.path.join(base_directory, 'db_repository')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-STATIC_DIR = os.path.join(base_directory, 'static')
+STATIC_DIR = os.path.join(base_directory, 'app/static')
 IMAGES_DIR = os.path.join(STATIC_DIR, 'images')
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
