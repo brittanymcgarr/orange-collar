@@ -161,14 +161,6 @@ def new_user_pet():
                       home_address = form.home_address.data,
                       user_id = g.user.get_id())
             
-            file = request.files[form.additional_info.data]
-                
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                
-                pet.additional_info = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            
             db.session.add(pet)
             current_user.pets.append(pet)
             db.session.commit()
