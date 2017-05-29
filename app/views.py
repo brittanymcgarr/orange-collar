@@ -1,6 +1,7 @@
 import bcrypt
 import os
 import datetime
+import requests
 
 from flask_login import login_user, logout_user, current_user, login_required
 from flask import (render_template, flash, redirect, session, url_for, 
@@ -178,6 +179,8 @@ def new_user_pet():
             current_user.pets.append(pet)
             db.session.commit()
             
+            getPetCoords(pet)
+            
             flash("Successfully registered your pet. Good Work!")
             return redirect(request.args.get('next') or url_for('dashboard'))
         
@@ -214,6 +217,8 @@ def editpet(petID):
                 db.session.add(pet)
                 db.session.commit()
                 
+                getPetCoords(pet)
+                
                 flash('Updated pet profile information.')
                 return redirect(url_for('pet_profile', petID=petID))
     
@@ -248,8 +253,6 @@ def image_upload(petID):
     return render_template('image_upload.html', title="Upload a Picture", petID=petID, form=form)
 
 # Create a Pet Profile for a found Pet
-
-# Edit a Pet Profile
 
 # Delete a Pet Profile
 
@@ -356,3 +359,29 @@ def calltemplate(petID):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+# Get pet latitude and longitude
+# Translate the given address to a lat, long coordinate from Google API
+# Offers 0.000000, 0.0000000 if lat long were not found
+def getPetCoords(pet):
+    lines = pet.home_address.replace(' ', "").split(',')
+    
+    if len(lines) >= 3:
+        url = "https://maps.googleapis.com/maps/api/geocode/json?address=%s,%s,%s" % (lines[0], lines[1], lines[2])
+        
+        response = requests.get(url)
+        resp_json = response.json()
+        
+        if len(resp_json['results']) > 0:
+            pet.home_lat_coord = resp_json['results'][0]['geometry']['location']['lat']
+            pet.home_long_coord = resp_json['results'][0]['geometry']['location']['lng']
+        else:
+            pet.home_address = 0.000000
+            pet.home_long_coord = 0.000000
+            
+        db.session.add(pet)
+        db.session.commit()
+        
+        flash("Updated Pet's home coordinates")
+    else:
+        flash("Unable to interpret the address. Separate street, city, and state with commas.")
