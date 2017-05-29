@@ -32,15 +32,19 @@
         <p>{{ pet.species}}</p>
         <p>{{ pet.color }}</p>
         <p>{{ pet.breed }}</p>
-        <p>Owner: 
-            {% if user.name %} 
-                {{ user.name }} 
-            {% else %} 
-                Unknown - Help me by signing in!
-            {% endif %}
-        </p>
-        <p>Address: {{ pet.home_address }}</p>
-        <p>Phone: {{ user.primary_phone }}</p>
+        
+        {% if g.user.is_authenticated %}
+            <p>Owner: 
+                {% if user.name %} 
+                    {{ user.name }} 
+                {% else %} 
+                    Unknown - Help me by signing in!
+                {% endif %}
+            </p>
+            
+            <p>Address: {{ pet.home_address }}</p>
+            <p>Phone: {{ user.primary_phone }}</p>
+        {% endif %}
     </div>
     
     <div id="profile_map">
