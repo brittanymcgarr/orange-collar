@@ -186,6 +186,38 @@ def new_user_pet():
     else:
         flash("You need to be logged in to set your own pets or try Report a Sighted Pet")
         return redirect(url_for('index'))
+        
+# Edit the user's pet
+@app.route('/editpet/<petID>', methods=['GET', 'POST'])
+def editpet(petID):
+    form = NewPetForm()
+    
+    if request.method == 'POST':
+        pet = Pet.query.get(petID) or None
+        
+        if pet not in g.user.pets:
+            pet = None
+            flash("You may only edit your own pets.")
+        
+        if g.user.is_authenticated and pet is not None:
+            if form.validate_on_submit():
+                pet.name = form.name.data
+                pet.species = form.species.data
+                pet.color = form.color.data
+                pet.breed = form.breed.data
+                pet.gender = form.gender.data
+                pet.description = form.description.data
+                pet.indoor_pet = form.indoor_pet.data
+                pet.status = form.status.data
+                pet.home_address = form.home_address.data
+
+                db.session.add(pet)
+                db.session.commit()
+                
+                flash('Updated pet profile information.')
+                return redirect(url_for('pet_profile', petID=petID))
+    
+    return render_template('edit_pet.html', title="Edit User", petID=petID, form=form)
 
 # Upload an image for the pet
 @app.route('/image-upload/<petID>', methods=['GET', 'POST'])

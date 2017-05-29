@@ -47,6 +47,10 @@
         {% endif %}
     </div>
     
+    <div id="editpet">
+        <a href="{{ url_for('editpet', petID=pet.id) }}">Edit</a>
+    </div>
+    
     <div id="profile_map">
         <!-- Filler until Google Map implemented -->
     </div>
