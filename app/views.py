@@ -287,16 +287,18 @@ def reportPet(petID):
     if user is not None:
         if user.primary_phone is not "":
             message = "Your %s, %s, was sighted in the area. Log in to Orange Collar to change your pet's status." % (pet.species, pet.name)
+            time = datetime.datetime.now()
             
             #if user.allow_mms and pet.picture is not "":
             #    sendMMS(message, user.primary_phone, pet.picture)
             if user.allow_sms:
-                sendSMS(message, user.primary_phone)
+                if (user.last_sms + datetime.timedelta(minutes = 10)) < time:
+                    sendSMS(message, user.primary_phone)
                 
             if user.allow_voice:
-                sendCall(pet, user, message, user.primary_phone)
+                if (user.last_call + datetime.timedelta(minutes = 10)) < time:
+                    sendCall(pet, user, message, user.primary_phone)
             
-            time = datetime.datetime.now()
             user.last_mms = time
             user.last_sms = time
             user.last_call = time
