@@ -7,17 +7,16 @@
     <form action="/edit", method="POST", name="edit">
         {{ form.hidden_tag() }}
         <p>
-            <input type="name" name="name" placeholder="Name"><br>
-            <input type="password" name="password" placeholder="{{ user.password_hash }}"><br>
-            <input type="password" name="confirm_password" placeholder="{{ user.password_hash }}"><br>
-            <input type="text" name="primary_phone" placeholder="{{ user.primary_phone }}"><br>
-            <input type="text" name="secondary_phone" placeholder="{{ user.secondary_phone }}"><br>
-            <input type="text" name="primary_address" placeholder="{{ user.primary_address }}"><br>
-            <input type="text" name="secondary_address" placeholder="{{ user.secondary_phone }}"><br>
+            Name <input type="name" name="name" placeholder="{{ user.name }}"><br>
+            Password <input type="password" name="password"><br>
+            Password Confirmation <input type="password" name="confirm_password"><br>
+            Primary Phone <input type="text" name="primary_phone" placeholder="{{ user.primary_phone }}"><br>
+            Secondary Phone <input type="text" name="secondary_phone" placeholder="{{ user.secondary_phone }}"><br>
+            Primary Address <input type="text" name="primary_address" placeholder="{{ user.primary_address }}"><br>
+            Secondary Address <input type="text" name="secondary_address" placeholder="{{ user.secondary_phone }}"><br>
             Allow SMS? <input type="checkbox" name="allow_sms"><br>
             Allow MMS? <input type="checkbox" name="allow_mms"><br>
             Allow Calling? <input type="checkbox" name="allow_voice"><br>
-            
             <br>
         </p>
         

@@ -128,21 +128,34 @@ def dashboard():
 # Edit a User Profile
 @app.route('/edit', methods=['GET', 'POST'])
 def edit():
-    form = EditForm()
-    user = User.query.get(g.user.id)
-    
-    if g.user.is_authenticated and user is not None:
-        if form.validate_on_submit():
-            form.populate_obj(user)
-            db.session.add(user)
-            db.session.commit()
+    if request.method == 'POST':
+        form = EditForm()
+        user = User.query.get(g.user.id)
         
-            return redirect(url_for('dashboard'))
+        if g.user.is_authenticated and user is not None:
+            if form.validate_on_submit():
+                salt = bcrypt.gensalt()
+                password_hash = bcrypt.hashpw(form.password.data.encode('utf-8'), salt)
         
-        return render_template('edit_user.html', title="Edit User", user=g.user, form=form)
+                user.name = form.name.data
+                user.password_hash = password_hash
+                user.primary_phone = form.primary_phone.data
+                user.secondary_phone = form.secondary_phone.data
+                user.primary_address = form.primary_address.data
+                user.secondary_address = form.secondary_address.data
+                user.allow_mms = form.allow_mms.data
+                user.allow_sms = form.allow_sms.data
+                user.allow_voice = form.allow_voice.data
+                
+                db.session.add(user)
+                db.session.commit()
+                
+                flash('Updated profile information.')
+                return redirect(url_for('dashboard'))
     else:
-        flash("You must be logged in to edit your profile")
-        return redirect(url_for('login'))
+        form = EditForm()
+    
+    return render_template('edit_user.html', title="Edit User", user=g.user, form=form)
 
 # Create a Pet Profile for a User's Pet
 @app.route('/new_user_pet', methods=['GET', 'POST'])
