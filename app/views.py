@@ -158,7 +158,6 @@ def new_user_pet():
                       gender = form.gender.data,
                       description = form.description.data,
                       status = form.status.data,
-                      additional_info = form.additional_info.data,
                       home_address = form.home_address.data,
                       user_id = g.user.get_id())
             
