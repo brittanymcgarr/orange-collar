@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <ul>
+        {% for pet in pets %}
+            <li>{{ pet.name }}: ({{ pet.home_lat_coord }}, {{ pet.home_long_coord }})</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

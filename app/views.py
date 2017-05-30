@@ -10,7 +10,8 @@ from flask import (render_template, flash, redirect, session, url_for,
 from werkzeug.utils import secure_filename
 
 from app import app, db, lm
-from .forms import LoginForm, SignUpForm, ContactForm, NewPetForm, EditForm, ImageForm
+from .forms import (LoginForm, SignUpForm, ContactForm, NewPetForm, 
+                    EditForm, ImageForm, LocationForm)
 from .models import User, Pet
 
 from twilio.rest import Client
@@ -29,9 +30,9 @@ def index():
     if user is None:
         user = {'name': None}
         
-    coords = getUserCoords() or None
+    form = LocationForm()
     
-    return render_template('index.html', title='', user=user, coords=coords)
+    return render_template('index.html', title='', user=user, form=form)
     
 # Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -388,19 +389,54 @@ def getPetCoords(pet):
         flash("Updated Pet's home coordinates")
     else:
         flash("Unable to interpret the address. Separate street, city, and state with commas.")
+        
+# Get the input coordinates
+def getSearchCoords(address=""):
+    lines = address.replace(' ', "").split(',')
+    coords = {}
+    
+    if len(lines) >= 3:
+        url = "https://maps.googleapis.com/maps/api/geocode/json?address=%s,%s,%s" % (lines[0], lines[1], lines[2])
+        
+        response = requests.get(url)
+        resp_json = response.json()
+        
+        if len(resp_json['results']) > 0:
+            coords['lat'] = resp_json['results'][0]['geometry']['location']['lat']
+            coords['long'] = resp_json['results'][0]['geometry']['location']['lng']
+        else:
+            coords['lat'] = 0.000000
+            coords['long'] = 0.000000
+    else:
+        flash("Unable to interpret the address. Separate street, city, and state with commas.")
+    
+    return coords
+    
+# Get the nearest pets by coordinates
+def getPetsByCoords(coords):
+    pets = Pet.query.filter((Pet.home_lat_coord >= (coords['lat'] - 0.0001)) &
+                            (Pet.home_lat_coord <= (coords['lat'] + 0.0001)) &
+                            (Pet.home_long_coord >= (coords['long'] - 0.0001)) &
+                            (Pet.home_long_coord <= (coords['long'] + 0.0001)))
+    
+    return pets
 
 # Get the requesting User's Coordinates
-def getUserCoords():
-    url = 'http://freegeoip.net/json/%s' % str(request.environ['REMOTE_ADDR'])
-    response = requests.get(url)
+@app.route('/locate', methods=['GET', 'POST'])
+def locate():
+    form = LocationForm()
+    pets = []
     
-    location = response.json()
-    locations = []
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            coords = getSearchCoords(form.address.data)
+            
+            if coords['lat'] > 0.000000:
+                pets = getPetsByCoords(coords)
+                flash("Finding pets in your area...")
+            else:
+                flash("Could not find coordinates. Make sure the street address, city, and state are separated by commas.")
+                return redirect(url_for('index'))
+                
+    return render_template('location.html', title="Found Pets", pets=pets, form=form)
     
-    if location['latitude'] is not 0:
-        locations.append(location['latitude']) 
-        locations.append(location['longitude'])
-        
-        return locations
-    else:
-        return [37.7749, -122.4194]

@@ -2,13 +2,17 @@
 
 {% block content %}
 
-    {% if coords != None %}
-
-        {% with map=googlemap_obj("another-map", coords[0], coords[1], markers=[(coords[0], coords[1]), (37.4300, -122.1400, "Hello")]) %}
-            {{map.html}}
-            {{map.js}}
-        {% endwith %}
+    <h1>Locate Lost Pets in Your Area</h1>
+    <h3>Enter the nearest address below to see pets in your area</h3>
+    
+    <form action="/locate", method="POST", name="locate">
+        {{ form.hidden_tag() }}
+        <p>
+            <input type="text" name="address" placeholder="Address"><br>
+        </p>
         
-    {% endif %}
+        <p><input type="submit" value="Search"></p>
+    </form>
+
 
 {% endblock %}

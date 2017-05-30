@@ -38,6 +38,10 @@ class EditForm(Form):
 class ContactForm(Form):
     pet_id = StringField('pet_id')
     
+    
+class LocationForm(Form):
+    address = StringField('address')
+    
 
 class NewPetForm(Form):
     name = StringField('name')
