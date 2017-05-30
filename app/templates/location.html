@@ -7,5 +7,16 @@
             <li>{{ pet.name }}: ({{ pet.home_lat_coord }}, {{ pet.home_long_coord }})</li>
         {% endfor %}
     </ul>
+    
+    <div id="map">
+        {% if petCoords | length > 0 %}
+            {% with map=googlemap_obj("local-pets", petCoords[0][0], petCoords[0][1], markers=petCoords) %}
+                {{ map.html }}
+                {{ map.js }}
+            {% endwith %}
+        {% else %}
+            <p>It looks like no pets were found near your coordinates.</p>
+        {% endif %}
+    </div>
 
 {% endblock %}

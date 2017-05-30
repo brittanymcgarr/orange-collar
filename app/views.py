@@ -420,6 +420,17 @@ def getPetsByCoords(coords):
                             (Pet.home_long_coord <= (coords['long'] + 0.1)))
     
     return pets
+    
+# Format the Pet coordinates for Google Maps
+def formatPetCoords(petCoords):
+    coords = []
+    
+    for pet in petCoords:
+        image = "<a href=\'%s\'><img src=\'/static/images/%s\' style=\'max-height:100px;max-width:100px;\'/></a>" % (url_for('pet_profile', petID=pet.id), pet.picture)
+        coord = (pet.home_lat_coord, pet.home_long_coord, image)
+        coords.append(coord)
+        
+    return coords
 
 # Get the requesting User's Coordinates
 @app.route('/locate', methods=['GET', 'POST'])
@@ -433,10 +444,13 @@ def locate():
             
             if coords['lat'] > 0.000000:
                 pets = getPetsByCoords(coords)
-                flash("Finding pets in your area...")
+                petCoords = formatPetCoords(pets)
+                
+                return render_template('location.html', title="Found Pets", pets=pets, petCoords=petCoords, form=form)
             else:
                 flash("Could not find coordinates. Make sure the street address, city, and state are separated by commas.")
                 return redirect(url_for('index'))
                 
-    return render_template('location.html', title="Found Pets", pets=pets, form=form)
+    flash("Please enter an address separated by commas.")
+    return redirect(url_for('index'))
     
