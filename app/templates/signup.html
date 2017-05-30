@@ -17,6 +17,9 @@
             Allow SMS? <input type="checkbox" name="allow_sms"><br>
             Allow MMS? <input type="checkbox" name="allow_mms"><br>
             Allow Calling? <input type="checkbox" name="allow_voice"><br>
+            Opt into Pet Watch? <input type="checkbox" name="pet_watch"><br>
+            
+            <p>The information gathered in this form is strictly for the use of informing you about neighborhood and personal pets. To avoid contact, you may opt out or edit your information at any time. SMS and MMS messaging data rates may apply based on your own carrier information.</p>
             
             {% for error in form.email.errors %}
                 <span style="color=red;">{{ error }}</span>

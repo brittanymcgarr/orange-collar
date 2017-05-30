@@ -5,25 +5,27 @@ from migrate import *
 from migrate.changeset import schema
 pre_meta = MetaData()
 post_meta = MetaData()
-pet = Table('pet', post_meta,
+user = Table('user', post_meta,
     Column('id', Integer, primary_key=True, nullable=False),
-    Column('name', String(length=120)),
-    Column('species', String(length=32)),
-    Column('color', String(length=32)),
-    Column('breed', String(length=32)),
-    Column('gender', String(length=32)),
-    Column('description', Text),
-    Column('indoor_pet', Boolean, default=ColumnDefault(True)),
-    Column('status', String(length=32)),
-    Column('additional_info', Text),
-    Column('owner_notified_last', DateTime),
-    Column('user_id', Integer),
-    Column('home_address', String(length=255)),
-    Column('home_lat_coord', Float(precision=8)),
-    Column('home_long_coord', Float(precision=8)),
+    Column('name', String(length=64)),
+    Column('email', String(length=120)),
+    Column('password_hash', String(length=128)),
+    Column('authenticated', Boolean, default=ColumnDefault(False)),
+    Column('primary_address', String(length=255)),
+    Column('primary_lat_coord', Float(precision=8)),
+    Column('primary_long_coord', Float(precision=8)),
     Column('secondary_address', String(length=255)),
-    Column('sighting_coords', Text),
-    Column('picture', String(length=200), default=ColumnDefault('')),
+    Column('secondary_lat_coord', Float(precision=8)),
+    Column('secondary_long_coord', Float(precision=8)),
+    Column('primary_phone', String(length=11)),
+    Column('secondary_phone', String(length=11)),
+    Column('allow_mms', Boolean, default=ColumnDefault(False)),
+    Column('allow_sms', Boolean, default=ColumnDefault(False)),
+    Column('allow_voice', Boolean, default=ColumnDefault(False)),
+    Column('pet_watch', Boolean, default=ColumnDefault(False)),
+    Column('last_mms', DateTime),
+    Column('last_sms', DateTime),
+    Column('last_call', DateTime),
 )
 
 
@@ -32,11 +34,11 @@ def upgrade(migrate_engine):
     # migrate_engine to your metadata
     pre_meta.bind = migrate_engine
     post_meta.bind = migrate_engine
-    post_meta.tables['pet'].columns['picture'].create()
+    post_meta.tables['user'].columns['pet_watch'].create()
 
 
 def downgrade(migrate_engine):
     # Operations to reverse the above upgrade go here.
     pre_meta.bind = migrate_engine
     post_meta.bind = migrate_engine
-    post_meta.tables['pet'].columns['picture'].drop()
+    post_meta.tables['user'].columns['pet_watch'].drop()

@@ -20,6 +20,7 @@ class SignUpForm(Form):
     allow_sms = BooleanField('allow_sms', default=True)
     allow_mms = BooleanField('allow_mms', default=True)
     allow_voice = BooleanField('allow_voice', default=False)
+    pet_watch = BooleanField('pet_watch', default=False)
     
 
 class EditForm(Form):
@@ -33,6 +34,7 @@ class EditForm(Form):
     allow_mms = BooleanField('allow_mms', default=True)
     allow_sms = BooleanField('allow_sms', default=True)
     allow_voice = BooleanField('allow_voice', default=True)
+    pet_watch = BooleanField('pet_watch', default=False)
     
 
 class ContactForm(Form):

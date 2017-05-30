@@ -23,6 +23,8 @@ class User(db.Model):
     allow_sms = db.Column(db.Boolean, default=False)
     allow_voice = db.Column(db.Boolean, default=False)
     
+    pet_watch = db.Column(db.Boolean, default=False)
+    
     pets = db.relationship('Pet', backref='user', lazy='dynamic')
     
     last_mms = db.Column(db.DateTime)

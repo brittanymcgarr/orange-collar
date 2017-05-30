@@ -102,12 +102,16 @@ def signup():
                     allow_mms = form.allow_mms.data,
                     allow_sms = form.allow_sms.data,
                     allow_voice = form.allow_voice.data,
+                    pet_watch = form.pet_watch.data,
                     last_mms = datetime.datetime.now(),
                     last_sms = datetime.datetime.now(),
                     last_call = datetime.datetime.now())
                     
         db.session.add(user)
         db.session.commit()
+        
+        getUserCoords(user)
+        
         flash("Successfully created account. Welcome!")
     
         user.authenticated = True
@@ -151,9 +155,12 @@ def edit():
                 user.allow_mms = form.allow_mms.data
                 user.allow_sms = form.allow_sms.data
                 user.allow_voice = form.allow_voice.data
+                user.pet_watch = form.pet_watch.data
                 
                 db.session.add(user)
                 db.session.commit()
+                
+                getUserCoords(user)
                 
                 flash('Updated profile information.')
                 return redirect(url_for('dashboard'))
@@ -222,6 +229,9 @@ def editpet(petID):
                 db.session.commit()
                 
                 getPetCoords(pet)
+                
+                if pet.status == "Lost":
+                    sendPetWatch(pet.id)
                 
                 flash('Updated pet profile information.')
                 return redirect(url_for('pet_profile', petID=petID))
@@ -390,6 +400,30 @@ def getPetCoords(pet):
     else:
         flash("Unable to interpret the address. Separate street, city, and state with commas.")
         
+# Get the user's coordinates
+def getUserCoords(user):
+    lines = user.primary_address.replace(' ', "").split(',')
+    
+    if len(lines) >= 3:
+        url = "https://maps.googleapis.com/maps/api/geocode/json?address=%s,%s,%s" % (lines[0], lines[1], lines[2])
+        
+        response = requests.get(url)
+        resp_json = response.json()
+        
+        if len(resp_json['results']) > 0:
+            user.primary_lat_coord = resp_json['results'][0]['geometry']['location']['lat']
+            user.primary_long_coord = resp_json['results'][0]['geometry']['location']['lng']
+        else:
+            user.primary_lat_coord = 0.000000
+            user.primary_long_coord = 0.000000
+            
+        db.session.add(user)
+        db.session.commit()
+        
+        flash("Updated user's coordinates")
+    else:
+        flash("Unable to interpret the address to coordinates. Separate street, city, and state with commas.")
+        
 # Get the input coordinates
 def getSearchCoords(address=""):
     lines = address.replace(' ', "").split(',')
@@ -454,3 +488,24 @@ def locate():
     flash("Please enter an address separated by commas.")
     return redirect(url_for('index'))
     
+# Pet Watch
+# Alert nearby Pet Watchers that an animal has been reported missing in their area
+def sendPetWatch(petID):
+    pet = Pet.query.get(petID) or None
+    
+    if pet is not None:
+        coords = {'lat': pet.home_lat_coord, 'long': pet.home_long_coord}
+        
+        watchers = User.query.filter((User.primary_lat_coord >= (coords['lat'] - 0.1)) &
+                                    (User.primary_lat_coord <= (coords['lat'] + 0.1)) &
+                                    (User.primary_long_coord >= (coords['long'] - 0.1)) &
+                                    (User.primary_long_coord <= (coords['long'] + 0.1)))
+                                    
+        message = "Calling all Watchdogs! A %s, %s, has been reported missing in the area. Please head to Orange Collar to view a description of %s. Thank you for watching out for this pet." % (pet.species, pet.name, pet.name)
+
+        for watcher in watchers:
+            if watcher.pet_watch:
+                if watcher.allow_sms:
+                    sendSMS(message, watcher.primary_phone)
+                if watcher.allow_voice:
+                    sendCall(pet, watcher, message, watcher.primary_phone)
