@@ -2,6 +2,7 @@ import bcrypt
 import os
 import datetime
 import requests
+import json
 
 from flask_login import login_user, logout_user, current_user, login_required
 from flask import (render_template, flash, redirect, session, url_for, 
@@ -27,8 +28,10 @@ def index():
     
     if user is None:
         user = {'name': None}
+        
+    coords = getUserCoords() or None
     
-    return render_template('index.html', title='', user=user)
+    return render_template('index.html', title='', user=user, coords=coords)
     
 # Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -385,3 +388,19 @@ def getPetCoords(pet):
         flash("Updated Pet's home coordinates")
     else:
         flash("Unable to interpret the address. Separate street, city, and state with commas.")
+
+# Get the requesting User's Coordinates
+def getUserCoords():
+    url = 'http://freegeoip.net/json/%s' % str(request.environ['REMOTE_ADDR'])
+    response = requests.get(url)
+    
+    location = response.json()
+    locations = []
+    
+    if location['latitude'] is not 0:
+        locations.append(location['latitude']) 
+        locations.append(location['longitude'])
+        
+        return locations
+    else:
+        return [37.7749, -122.4194]

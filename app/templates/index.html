@@ -2,6 +2,13 @@
 
 {% block content %}
 
-    
+    {% if coords != None %}
+
+        {% with map=googlemap_obj("another-map", coords[0], coords[1], markers=[(coords[0], coords[1]), (37.4300, -122.1400, "Hello")]) %}
+            {{map.html}}
+            {{map.js}}
+        {% endwith %}
+        
+    {% endif %}
 
 {% endblock %}

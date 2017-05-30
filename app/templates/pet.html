@@ -45,11 +45,11 @@
             <p>Address: {{ pet.home_address }}</p>
             <p>Coordinates: ({{ pet.home_lat_coord }}, {{ pet.home_long_coord }})</p>
             <p>Phone: {{ user.primary_phone }}</p>
+            
+            <div id="editpet">
+                <a href="{{ url_for('editpet', petID=pet.id) }}">Edit</a>
+            </div>
         {% endif %}
-    </div>
-    
-    <div id="editpet">
-        <a href="{{ url_for('editpet', petID=pet.id) }}">Edit</a>
     </div>
     
     <div id="profile_map">
