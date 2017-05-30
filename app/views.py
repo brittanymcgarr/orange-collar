@@ -414,10 +414,10 @@ def getSearchCoords(address=""):
     
 # Get the nearest pets by coordinates
 def getPetsByCoords(coords):
-    pets = Pet.query.filter((Pet.home_lat_coord >= (coords['lat'] - 0.0001)) &
-                            (Pet.home_lat_coord <= (coords['lat'] + 0.0001)) &
-                            (Pet.home_long_coord >= (coords['long'] - 0.0001)) &
-                            (Pet.home_long_coord <= (coords['long'] + 0.0001)))
+    pets = Pet.query.filter((Pet.home_lat_coord >= (coords['lat'] - 0.1)) &
+                            (Pet.home_lat_coord <= (coords['lat'] + 0.1)) &
+                            (Pet.home_long_coord >= (coords['long'] - 0.1)) &
+                            (Pet.home_long_coord <= (coords['long'] + 0.1)))
     
     return pets
 
