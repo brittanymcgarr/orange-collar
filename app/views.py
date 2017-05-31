@@ -207,7 +207,7 @@ def new_user_pet():
 def editpet(petID):
     form = NewPetForm()
     
-    if request.method == 'POST':
+    if request.method == 'POST' and g.user.is_authenticated:
         pet = Pet.query.get(petID) or None
         
         if pet not in g.user.pets:
@@ -242,13 +242,13 @@ def editpet(petID):
 # Upload an image for the pet
 @app.route('/image-upload/<petID>', methods=['GET', 'POST'])
 def image_upload(petID):
-    if request.method == 'POST':
+    if request.method == 'POST' and g.user.is_authenticated:
         form = ImageForm(request.form)
         
         if form.validate_on_submit():
             pet = Pet.query.get(petID) or None
             
-            if pet is not None:
+            if pet is not None and pet is in g.user.pets:
                 image_file = request.files['file']
                 filename = os.path.join(app.config['IMAGES_DIR'], secure_filename(image_file.filename))
                 image_file.save(filename)
