@@ -1,39 +1,39 @@
 <html>
 
     <head>
-      
         <title>
             Orange Collar
             {% if title != '' %}
                  - {{ title }}
             {% endif %}
         </title>
+        
+        <head>
+            <link rel="stylesheet" href="/static/styles/styles.css">
+        </head>
     </head>
     
     <body>
-        <h1>Orange Collar</h1>
-        <h3>Your Neighborhood Watch for Pets</h3>
-        
-        <div id="menu">
-            <div id="menu-option"><a href="/index">Home</a></div>
-            
-            {% if g.user.is_authenticated %}
-                <div id="menu-option">
-                    <a href="{{ url_for('dashboard') }}">Dashboard</a>
-                </div>
-                
-                <div id="menu-option">
-                    <a href="{{ url_for('logout') }}">Log Out</a>
-                </div>
-            {% else %}
-                <div id="menu-option">
-                    <a href="{{ url_for('login') }}">Log In</a>
-                </div>
-            {% endif %}
-            
+        <div id="top">
+            <h1>Orange Collar</h1>
+            <h3>Your Neighborhood Watch for Pets</h3>
         </div>
         
-        <hr>
+        <div id="menu">
+            <ul>
+                <li><a href="/index">Home</a></li>
+            
+                {% if g.user.is_authenticated %}
+                    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    
+                    <li><a href="{{ url_for('logout') }}">Log Out</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Log In</a></li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div id="flash_banner">
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     <ul>
@@ -43,8 +43,14 @@
                     </ul>
                 {% endif %}
             {% endwith %}
+        </div>
+
+        <div id="content">
+            <div id="article">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
         
-        {% block content %}{% endblock %}
     </body>
 
 </html>

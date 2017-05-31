@@ -10,7 +10,7 @@
     
     <div id="map">
         {% if petCoords | length > 0 %}
-            {% with map=googlemap_obj("local-pets", petCoords[0][0], petCoords[0][1], markers=petCoords) %}
+            {% with map=googlemap_obj("local-pets", petCoords[0][0], petCoords[0][1], markers=petCoords, style="height:500px;width:800px") %}
                 {{ map.html }}
                 {{ map.js }}
             {% endwith %}

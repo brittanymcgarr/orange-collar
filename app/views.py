@@ -3,6 +3,7 @@ import os
 import datetime
 import requests
 import json
+import time
 
 from flask_login import login_user, logout_user, current_user, login_required
 from flask import (render_template, flash, redirect, session, url_for, 
@@ -306,8 +307,8 @@ def reportPet(petID):
             message = "Your %s, %s, was sighted in the area. Log in to Orange Collar to change your pet's status." % (pet.species, pet.name)
             time = datetime.datetime.now()
             
-            #if user.allow_mms and pet.picture is not "":
-            #    sendMMS(message, user.primary_phone, pet.picture)
+            if user.allow_mms:
+                sendMMS(message, user.primary_phone, pet.picture)
             if user.allow_sms:
                 if (user.last_sms + datetime.timedelta(minutes = 10)) < time:
                     sendSMS(message, user.primary_phone)
@@ -339,10 +340,25 @@ def sendSMS(message="Your pet has been reported.", phone=""):
         client.messages.create(to = "+1%s" % phone,
                                from_ = local_phone,
                                body = message)
+        time.sleep(1)
 
 # Send MMS
 def sendMMS(message="Your pet has been reported.", phone="", picture=""):
-    pass
+    if picture == "" or picture == None:
+        picture = 'http://orange-collar.herokuapp.com/static/orangecollar.png'
+    else:
+        picture = 'http://orange-collar.herokuapp.com/static/images/%s' % picture
+    
+    if phone != "":
+        account_sid = str(os.getenv('TWILIO_SID'))
+        auth_token = str(os.getenv('TWILIO_AUTH_TOKEN'))
+        local_phone = str(os.getenv('OC_PHONE'))
+        
+        client = Client(account_sid, auth_token)
+        client.messages.create(to = "+1%s" % phone,
+                               from_ = local_phone,
+                               body = message,
+                               media_url=[picture])
 
 # Send Call
 def sendCall(pet, user, message="Your pet has been reported.", phone=""):
@@ -358,6 +374,7 @@ def sendCall(pet, user, message="Your pet has been reported.", phone=""):
         call = client.calls.create(to = "+1%s" % phone,
                                    from_ = local_phone,
                                    url = url)
+        time.sleep(1)
 
 # Create XML
 @app.route('/calltemplate.xml/<petID>', methods=['GET', 'POST'])
@@ -505,7 +522,10 @@ def sendPetWatch(petID):
 
         for watcher in watchers:
             if watcher.pet_watch:
-                if watcher.allow_sms:
+                if watcher.allow_mms:
+                    sendMMS(message, watcher.primary_phone, pet.picture)
+                elif watcher.allow_sms:
                     sendSMS(message, watcher.primary_phone)
+
                 if watcher.allow_voice:
                     sendCall(pet, watcher, message, watcher.primary_phone)

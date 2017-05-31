@@ -9,29 +9,40 @@
         <p><input type="submit" value="Contact Owner"></p>
     </form>
     
-    {% if pet.picture != "" and pet.picture != None %}
-        <a href="{{ url_for('image_upload', petID=pet.id) }}"><img src="/static/images/{{ pet.picture }}" alt="Pet Picture" title="Change your pet's picture" style="max-width:500px;max-height:500px;"></a>
-    {% else %}
-        <a href="{{ url_for('image_upload', petID=pet.id) }}"><img src="/static/orangecollar.png" alt="Pet Picture" title="Change your pet's picture" style="max-width:500px;max-height:500px;"></a>
-    {% endif %}
-    
-    <p>I am an {% if pet.indoor_pet %} INDOOR {% else %} OUTDOOR {% endif %} pet</p>
+    <div id="pet-picture">
+        {% if pet.picture != "" and pet.picture != None %}
+            <a href="{{ url_for('image_upload', petID=pet.id) }}">
+                <img src="/static/images/{{ pet.picture }}" alt="Pet Picture" 
+                title="Change your pet's picture" 
+                style="max-width:500px;max-height:500px;border: 10px solid {{ pet.color }};border-radius: 5px;">
+            </a>
+        {% else %}
+            <a href="{{ url_for('image_upload', petID=pet.id) }}">
+                <img src="/static/orangecollar.png" alt="Pet Picture" 
+                title="Change your pet's picture" 
+                style="max-width:500px;max-height:500px;border: 10px solid {{ pet.color }};border-radius: 5px;">
+            </a>
+        {% endif %}
+    </div>
     
     <div id="pet_status">
-        I am currently: 
-        
         {% if pet.status == "Lost" %}
             <h2>LOST</h2>
             <p>Notify my owner if you have seen me by pressing Contact Owner.</p>
         {% else %}
-            <p>At Home, but I may be lost if you are seeing me, now. Help me by contacting my owner.</p>
+            <p>At Home, but I may be lost if you are seeing me, now.
+               <br>Indoor pets often get lost or ignored outside. Help me by contacting my owner.</p>
         {% endif %}
     </div>
     
     <div id="profile">
-        <p>{{ pet.species}}</p>
-        <p>{{ pet.color }}</p>
-        <p>{{ pet.breed }}</p>
+        
+        <p>I am an {% if pet.indoor_pet %} INDOOR {% else %} OUTDOOR {% endif %} pet</p>
+        
+        <p>Species: {{ pet.species}}</p>
+        <p>Breed: {{ pet.breed }}</p>
+        <p>Gender: {{ pet.gender }}</p>
+        <p>About Me:<br>{{ pet.description }}</p>
         
         {% if g.user.is_authenticated %}
             <p>Owner: 
@@ -53,7 +64,12 @@
     </div>
     
     <div id="profile_map">
-        <!-- Filler until Google Map implemented -->
+        {% if pet.home_lat_coord > 0.000000 %}
+            {% with map=googlemap_obj("local-pets", pet.home_lat_coord, pet.home_long_coord, markers=[(pet.home_lat_coord,pet.home_long_coord)], style="height:500px;width:700px;") %}
+                {{ map.html }}
+                {{ map.js }}
+            {% endwith %}
+        {% endif %}
     </div>
     
 {% endblock %}
