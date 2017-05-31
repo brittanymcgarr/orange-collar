@@ -178,7 +178,7 @@ def new_user_pet():
     if g.user is not None and g.user.is_authenticated:
         if form.validate_on_submit():
             pet = Pet(name = form.name.data,
-                      species = form.species.data,
+                      species = form.species.data.lower(),
                       color = form.color.data,
                       breed = form.breed.data,
                       gender = form.gender.data,
@@ -543,7 +543,89 @@ def incomingcall():
 # Incoming MMS
 # Incoming MMS/SMS with image attachments should be forwarded to the appropriate
 # owner of the pet.
-@app.route('/incomingmessage', methods=['GET', 'POST'])
+@app.route('/incomingmessage', methods=['POST'])
 def incomingmessage():
-    pass
+    number = request.form['From']
+    message = request.form['Body']
+    message.lower()
+    
+    # Just get the first image, if multiple
+    if request.form['NumMedia'] > 0:
+        media = request.form["MediaUrl0"]
+        # Figure out if Twilio already prevents illicit images
+        # Otherwise, implement through Google Cloud Vision
 
+    search = False
+        
+    if message.contains('help'):
+        response = "Thank you for contacting Orange Collar. Text the street address and animal to report a sighted pet and include semi-colons. e.g. \'address:123 Example Street, San Francisco, CA; animal: Cat; description: Fluffy and black;\'. You can also include a picture. Thank you for doing your part!"
+    elif message.contains('address'):
+        response = "Thank you for doing your part. The pet is being compared with our database of lost pets, and if an owner is matched, we will contact them shortly."
+        search = True
+    else:
+        response = "Your message was unclear. Please separate your messages or use semi-colons. We appreciate your help!"
+        
+    if search:
+        searchPetsSMS(message, media)
+        
+    sendSMS(response, number)
+    
+# Search the Pets database for the message
+def searchPetsSMS(message, media):
+    messages = message.split(';')
+    messages.sort()
+    
+    for line in messages:
+        line.strip()
+        line.lstrip()
+        
+        if line == '':
+            messages.remove(line)
+    
+    parameters = {}
+    
+    for line in messages:
+        fields = line.split(':')
+        
+        for field in fields:
+            field.lstrip()
+            field.strip()
+        
+        if len(fields) == 2:
+            parameters[fields[0]] = fields[1]
+    
+    addr_pets = []
+    anml_pets = []
+    
+    if 'address:' in parameters.keys():
+        alert_message = "An animal was reported at %s, matching your lost pet species." % parameters['address:']
+        coords = getSearchCoords(parameters['address:'])
+        addr_pets.append(getPetsByCoords(coords))
+    else:
+        # Want to limit this to helpful information
+        return
+    
+    if 'animal:' in parameters.keys():
+        anml_pets.append(Pet.query.filter_by('species' == parameters['animal:'] & 'status' == 'Lost'))
+        
+    for animal in addr_pets:
+        if animal.species == parameters['animal:']:
+            anml_pets.append(animal)
+            
+    anml_pets = list(set(anml_pets))
+    
+    for pet in anml_pets:
+        if pet.user_id:
+            contactUser(pet.user_id, pet, alert_message, media)
+    
+# Contact the User through any channel applied
+def contactUser(user_id, pet, message, media=""):
+    user = User.query.get(user_id)
+    
+    if user.allow_mms:
+        sendMMS(message=message, phone=user.primary_phone, picture=media)
+    if not user.allow_mms and user.allow_sms:
+        sendSMS(message=message, phone=user.primary_phone)
+    if user.allow_voice:
+        sendCall(pet, user, message, user.primary_phone)
+    
