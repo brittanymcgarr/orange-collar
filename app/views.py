@@ -546,6 +546,8 @@ def incomingcall():
 @app.route('/incomingmessage', methods=['POST'])
 def incomingmessage():
     number = request.form['From']
+    number = number[2:]
+    
     message = request.form['Body'].lower()
     message.lower()
     
