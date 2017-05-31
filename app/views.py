@@ -248,7 +248,7 @@ def image_upload(petID):
         if form.validate_on_submit():
             pet = Pet.query.get(petID) or None
             
-            if pet is not None and pet is in g.user.pets:
+            if pet is not None and pet in g.user.pets:
                 image_file = request.files['file']
                 filename = os.path.join(app.config['IMAGES_DIR'], secure_filename(image_file.filename))
                 image_file.save(filename)
