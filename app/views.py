@@ -546,7 +546,7 @@ def incomingcall():
 @app.route('/incomingmessage', methods=['POST'])
 def incomingmessage():
     number = request.form['From']
-    message = request.form['Body']
+    message = request.form['Body'].lower()
     message.lower()
     
     # Just get the first image, if multiple
@@ -557,6 +557,9 @@ def incomingmessage():
 
     search = False
         
+    helpstr = u"help"
+    addrstr = u"address"
+    
     if message.contains(u'help'):
         response = "Thank you for contacting Orange Collar. Text the street address and animal to report a sighted pet and include semi-colons. e.g. \'address:123 Example Street, San Francisco, CA; animal: Cat; description: Fluffy and black;\'. You can also include a picture. Thank you for doing your part!"
     elif message.contains(u'address'):
@@ -596,20 +599,22 @@ def searchPetsSMS(message, media):
     
     addr_pets = []
     anml_pets = []
+    anmlstr = u"animal:"
+    addrstr = u"address:"
     
-    if 'address:' in parameters.keys():
-        alert_message = "An animal was reported at %s, matching your lost pet species." % parameters['address:']
-        coords = getSearchCoords(parameters['address:'])
+    if addrstr in parameters.keys():
+        alert_message = "An animal was reported at %s, matching your lost pet species." % parameters[addrstr]
+        coords = getSearchCoords(parameters[addrstr])
         addr_pets.append(getPetsByCoords(coords))
     else:
         # Want to limit this to helpful information
         return
     
-    if 'animal:' in parameters.keys():
-        anml_pets.append(Pet.query.filter_by('species' == parameters['animal:'] & 'status' == 'Lost'))
+    if anmlstr in parameters.keys():
+        anml_pets.append(Pet.query.filter_by('species' == parameters[anmlstr] & 'status' == 'Lost'))
         
     for animal in addr_pets:
-        if animal.species == parameters['animal:']:
+        if animal.species == parameters[anmlstr]:
             anml_pets.append(animal)
             
     anml_pets = list(set(anml_pets))
