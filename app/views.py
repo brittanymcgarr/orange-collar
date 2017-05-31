@@ -529,3 +529,21 @@ def sendPetWatch(petID):
 
                 if watcher.allow_voice:
                     sendCall(pet, watcher, message, watcher.primary_phone)
+
+# Incoming voice
+# Incoming voice should return a polite redirect to website
+@app.route('/incomingcall', methods=['GET', 'POST'])
+def incomingcall():
+    if request.method == 'POST':
+        response_page = render_template('/incomingcall.xml')
+        return Response(response_page, mimetype='text/xml')
+    else:
+        return redirect(url_for('index'))
+
+# Incoming MMS
+# Incoming MMS/SMS with image attachments should be forwarded to the appropriate
+# owner of the pet.
+@app.route('/incomingmessage', methods=['GET', 'POST'])
+def incomingmessage():
+    pass
+

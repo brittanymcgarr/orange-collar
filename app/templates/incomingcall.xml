@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Say voice="alice">
+        Thank you for calling into Orange Collar. Please do your part to protect your neighborhood pets by signing up at orange-collar.herokuapps.com.
+    </Say>
+    <Play>http://demo.twilio.com/docs/classic.mp3</Play>
+</Response>
