@@ -557,9 +557,9 @@ def incomingmessage():
 
     search = False
         
-    if message.contains('help'):
+    if message.contains(u'help'):
         response = "Thank you for contacting Orange Collar. Text the street address and animal to report a sighted pet and include semi-colons. e.g. \'address:123 Example Street, San Francisco, CA; animal: Cat; description: Fluffy and black;\'. You can also include a picture. Thank you for doing your part!"
-    elif message.contains('address'):
+    elif message.contains(u'address'):
         response = "Thank you for doing your part. The pet is being compared with our database of lost pets, and if an owner is matched, we will contact them shortly."
         search = True
     else:
