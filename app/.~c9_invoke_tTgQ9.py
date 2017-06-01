@@ -591,7 +591,7 @@ def incomingmessage():
     
 # Search the Pets database for the message
 def searchPetsSMS(message, media):
-    print "Message: %s\nMedia: %s" % (message, media)
+    print "Message: %s\nMedia: %s" % (message, me)
     messages = message.split(';')
     params = {}
     
