@@ -547,7 +547,28 @@ def incomingcall():
 # lost pets
 @app.route('/incomingmessage', methods=['GET', 'POST'])
 def incomingmessage():
-    response = "Testing"
+#    number = request.values.get('From', None)
+ #   number = number[2:]
+    message = request.values.get('Body', None).lower()
+   # media = ""
+    
+    # Just get the first image, if multiple
+    #if request.values.get('NumMedia', None) > 0:
+     #   media = request.form["MediaUrl0"]
+        # Figure out if Twilio already prevents illicit images
+        # Otherwise, implement through Google Cloud Vision
+
+    search = False
+    addrstr = u"address"
+    
+    if message is not None and message.find(addrstr) > -1:
+        response = "Thank you for doing your part. The pet is being compared with our database of lost pets, and if an owner is matched, we will contact them shortly."
+        search = True
+    else:
+        response = "Thank you for contacting Orange Collar. Text the street address and animal to report a sighted pet and include semi-colons. e.g. \'address:123 Example Street, San Francisco, CA; animal: Cat; description: Fluffy and black;\'. You can also include a picture. Thank you for doing your part!"
+
+#    if search:
+ #       searchPetsSMS(message, media)
         
     responder = MessagingResponse()
     responder.message(response)
