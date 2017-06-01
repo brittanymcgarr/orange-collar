@@ -551,14 +551,19 @@ def incomingmessage():
     number = request.form['From']
     number = number[2:]
     
+    print "Incoming request from %s" % number
+    
     message = request.form['Body'].lower()
-    message.lower()
+    
+    print "Body: %s" % message
     
     media = ""
     
     # Just get the first image, if multiple
     if request.form['NumMedia'] > 0:
         media = request.form["MediaUrl0"]
+        
+        print "Media: %s" % media
         # Figure out if Twilio already prevents illicit images
         # Otherwise, implement through Google Cloud Vision
 
@@ -571,7 +576,10 @@ def incomingmessage():
     else:
         response = "Thank you for contacting Orange Collar. Text the street address and animal to report a sighted pet and include semi-colons. e.g. \'address:123 Example Street, San Francisco, CA; animal: Cat; description: Fluffy and black;\'. You can also include a picture. Thank you for doing your part!"
 
+    print response
+
     if search:
+        print "Entering Search"
         searchPetsSMS(message, media)
         
     sendSMS(response, number)
@@ -622,6 +630,7 @@ def searchPetsSMS(message, media):
             anml_pets.append(animal)
             
     anml_pets = list(set(anml_pets))
+    print "Animals found: %s" % str(anml_pets)
     
     for pet in anml_pets:
         if pet.user_id:
