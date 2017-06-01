@@ -465,12 +465,15 @@ def getSearchCoords(address=""):
     
 # Get the nearest pets by coordinates
 def getPetsByCoords(coords):
-    pets = Pet.query.filter((Pet.home_lat_coord >= (coords['lat'] - 0.1)) &
-                            (Pet.home_lat_coord <= (coords['lat'] + 0.1)) &
-                            (Pet.home_long_coord >= (coords['long'] - 0.1)) &
-                            (Pet.home_long_coord <= (coords['long'] + 0.1)))
-    
-    return pets
+    if 'lat' in coords.keys() and 'long' in coords.keys():
+        pets = Pet.query.filter((Pet.home_lat_coord >= (coords['lat'] - 0.1)) &
+                                (Pet.home_lat_coord <= (coords['lat'] + 0.1)) &
+                                (Pet.home_long_coord >= (coords['long'] - 0.1)) &
+                                (Pet.home_long_coord <= (coords['long'] + 0.1)))
+        
+        return pets
+    else:
+        return []
     
 # Format the Pet coordinates for Google Maps
 def formatPetCoords(petCoords):
@@ -551,6 +554,8 @@ def incomingmessage():
     message = request.form['Body'].lower()
     message.lower()
     
+    media = ""
+    
     # Just get the first image, if multiple
     if request.form['NumMedia'] > 0:
         media = request.form["MediaUrl0"]
@@ -575,7 +580,6 @@ def incomingmessage():
 # Search the Pets database for the message
 def searchPetsSMS(message, media):
     messages = message.split(';')
-    messages.sort()
     
     for line in messages:
         line.strip()
@@ -587,27 +591,28 @@ def searchPetsSMS(message, media):
     parameters = {}
     
     for line in messages:
-        fields = line.split(':')
-        
-        for field in fields:
-            field.lstrip()
-            field.strip()
-        
-        if len(fields) == 2:
-            parameters[fields[0]] = fields[1]
+        if line.find(u':'):
+            fields = line.split(':')
+            
+            for field in fields:
+                field.lstrip()
+                field.strip()
+            
+            if len(fields) == 2:
+                parameters[fields[0]] = fields[1]
     
     addr_pets = []
     anml_pets = []
-    anmlstr = u"animal:"
-    addrstr = u"address:"
+    anmlstr = u"animal"
+    addrstr = u"address"
     
     if addrstr in parameters.keys():
-        alert_message = "An animal was reported at %s, matching your lost pet species." % parameters[addrstr]
+        alert_message = "An animal was reported at %s, matching your lost pet\'s species." % parameters[addrstr]
         coords = getSearchCoords(parameters[addrstr])
         addr_pets.append(getPetsByCoords(coords))
     else:
         # Want to limit this to helpful information
-        return
+        return False
     
     if anmlstr in parameters.keys():
         anml_pets.append(Pet.query.filter_by('species' == parameters[anmlstr] & 'status' == 'Lost'))
@@ -621,6 +626,8 @@ def searchPetsSMS(message, media):
     for pet in anml_pets:
         if pet.user_id:
             contactUser(pet.user_id, pet, alert_message, media)
+    
+    return True
     
 # Contact the User through any channel applied
 def contactUser(user_id, pet, message, media=""):
