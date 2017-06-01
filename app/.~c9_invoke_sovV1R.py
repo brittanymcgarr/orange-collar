@@ -556,7 +556,7 @@ def incomingmessage():
     
     if alert is None:
         alert = Alert()
-        alert.number = str(number)
+        alert.phone = str(number)
         alert.message = ""
         alert.media = ""
     
