@@ -558,18 +558,14 @@ def incomingmessage():
         # Otherwise, implement through Google Cloud Vision
 
     search = False
-        
-    helpstr = u"help"
     addrstr = u"address"
     
-    if message.find(helpstr):
-        response = "Thank you for contacting Orange Collar. Text the street address and animal to report a sighted pet and include semi-colons. e.g. \'address:123 Example Street, San Francisco, CA; animal: Cat; description: Fluffy and black;\'. You can also include a picture. Thank you for doing your part!"
-    elif message.find(addrstr):
+    if message.find(addrstr):
         response = "Thank you for doing your part. The pet is being compared with our database of lost pets, and if an owner is matched, we will contact them shortly."
         search = True
     else:
-        response = "Your message was unclear. Please separate your messages or use semi-colons. We appreciate your help!"
-        
+        response = "Thank you for contacting Orange Collar. Text the street address and animal to report a sighted pet and include semi-colons. e.g. \'address:123 Example Street, San Francisco, CA; animal: Cat; description: Fluffy and black;\'. You can also include a picture. Thank you for doing your part!"
+
     if search:
         searchPetsSMS(message, media)
         
