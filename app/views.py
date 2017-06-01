@@ -16,6 +16,7 @@ from .forms import (LoginForm, SignUpForm, ContactForm, NewPetForm,
 from .models import User, Pet
 
 from twilio.rest import Client
+from twilio.twiml.messaging_response import MessagingResponse
 
 # Get the g session
 @app.before_request
@@ -580,8 +581,8 @@ def incomingmessage():
         print "Entering Search"
         searchPetsSMS(message, media)
         
-    sendSMS(response, number)
-    return Response(render_template('/incomingmessage.xml', message=response), mimetype='text/xml')
+    responder = MessagingResponse().message(response)
+    return str(responder)
     
 # Search the Pets database for the message
 def searchPetsSMS(message, media):
