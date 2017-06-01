@@ -547,7 +547,7 @@ def incomingcall():
 # lost pets
 @app.route('/incomingmessage', methods=['GET', 'POST'])
 def incomingmessage():
-    response = "Testing"
+    response = "Testin"
         
     responder = MessagingResponse()
     responder.message(response)
