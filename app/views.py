@@ -572,8 +572,9 @@ def incomingmessage():
     addrstr = u"address"
     
     if alert.message is not None and message.find(addrstr) > -1:
-        if alert.last_call is not None and (alert.time_issued + datetime.timedelta(minutes = 5) < datetime.datetime.now()):
+        if alert.time_issued is None or (alert.time_issued + datetime.timedelta(minutes = 5) < datetime.datetime.now()):
             response = "Thank you for doing your part. The pet is being compared with our database of lost pets, and if an owner is matched, we will contact them shortly."
+            alert.time_issued = datetime.datetime.now()
         else:
             response = "Thank you for doing your part!"
         search = True
