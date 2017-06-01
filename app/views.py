@@ -581,7 +581,7 @@ def incomingmessage():
         searchPetsSMS(message, media)
         
     sendSMS(response, number)
-    return ('', 204)
+    return render_template('/incomingmessage.xml', message=response)
     
 # Search the Pets database for the message
 def searchPetsSMS(message, media):
