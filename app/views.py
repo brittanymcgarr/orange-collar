@@ -545,7 +545,7 @@ def incomingcall():
 # Incoming MMS
 # Incoming MMS/SMS with image attachments should be forwarded to the owners of 
 # lost pets
-@app.route('/incomingmessage', methods=['POST'])
+@app.route('/incomingmessage', methods=['GET', 'POST'])
 def incomingmessage():
     number = request.form['From']
     number = number[2:]
@@ -572,8 +572,9 @@ def incomingmessage():
     if search:
         searchPetsSMS(message, media)
         
-    responder = MessagingResponse().message(response)
-    return responder
+    responder = MessagingResponse()
+    responder.message(response)
+    return str(responder)
     
 # Search the Pets database for the message
 def searchPetsSMS(message, media):
