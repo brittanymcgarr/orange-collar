@@ -575,31 +575,22 @@ def incomingmessage():
 # Search the Pets database for the message
 def searchPetsSMS(message, media):
     messages = message.split(';')
+    params = {}
     
-    for line in messages:
-        line.strip()
-        line.lstrip()
-        
-        if line == '':
-            messages.remove(line)
-    
-    parameters = {}
-    
-    for line in messages:
-        if line.find(u':'):
-            fields = line.split(':')
+    for field in messages:
+        if field.find(':') > -1:
+            tags = field.split(':')
             
-            for field in fields:
-                field.lstrip()
-                field.strip()
-            
-            if len(fields) == 2:
-                parameters[fields[0]] = fields[1]
+            if len(tags) == 2:
+                key = tags[0].strip().lstrip()
+                value = tags[1].strip().lstrip()
+                
+                params[key] = value
     
     addr_pets = []
     anml_pets = []
-    anmlstr = u"animal"
-    addrstr = u"address"
+    anmlstr = "animal"
+    addrstr = "address"
     
     if addrstr in parameters.keys():
         alert_message = "An animal was reported at %s, matching your lost pet\'s species." % parameters[addrstr]
