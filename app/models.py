@@ -82,6 +82,7 @@ class Pet(db.Model):
 class Alert(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     phone = db.Column(db.String(8), unique=True)
+    number = db.Column(db.String(15), unique=True, nullable=False)
     time_issued = db.Column(db.DateTime)
     message = db.Column(db.String(1024), nullable=True)
     media = db.Column(db.String(1024), nullable=True)
