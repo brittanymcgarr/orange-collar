@@ -604,7 +604,7 @@ def searchPetsSMS(message, media):
     if addrstr in parameters.keys():
         alert_message = "An animal was reported at %s, matching your lost pet\'s species." % parameters[addrstr]
         coords = getSearchCoords(parameters[addrstr])
-        addr_pets.append(getPetsByCoords(coords))
+        addr_pets = getPetsByCoords(coords)
     else:
         # Want to limit this to helpful information
         return False
