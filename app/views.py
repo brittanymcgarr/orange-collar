@@ -468,7 +468,7 @@ def getPetsByCoords(coords):
         pets = Pet.query.filter((Pet.home_lat_coord >= (coords['lat'] - 0.1)) &
                                 (Pet.home_lat_coord <= (coords['lat'] + 0.1)) &
                                 (Pet.home_long_coord >= (coords['long'] - 0.1)) &
-                                (Pet.home_long_coord <= (coords['long'] + 0.1)))
+                                (Pet.home_long_coord <= (coords['long'] + 0.1))).all()
         
         return pets
     else:
@@ -610,7 +610,7 @@ def searchPetsSMS(message, media):
         return False
     
     if anmlstr in parameters.keys():
-        anml_pets.append(Pet.query.filter(Pet.species == parameters[anmlstr], Pet.status == 'Lost').all())
+        anml_pets = Pet.query.filter(Pet.species == parameters[anmlstr], Pet.status == 'Lost').all()
         
     for animal in addr_pets:
         if animal.species == parameters[anmlstr]:
