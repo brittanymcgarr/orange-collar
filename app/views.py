@@ -580,7 +580,7 @@ def incomingmessage():
     else:
         response = "Thank you for contacting Orange Collar. Text the street address and animal to report a sighted pet and include semi-colons. e.g. \'address:123 Example Street, San Francisco, CA; animal: Cat; description: Fluffy and black;\'. You can also include a picture. Thank you for doing your part!"
 
-    if media != "" or message != "":
+    if alert.message != "":
         searchPetsSMS(alert.message, alert.media)
         
     db.session.add(alert)
