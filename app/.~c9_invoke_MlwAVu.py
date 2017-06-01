@@ -553,8 +553,6 @@ def incomingmessage():
     
     print "Incoming request from %s" % number
     
-    print str(request.form)
-    
     message = request.form['Body'].lower()
     
     print "Body: %s" % message
