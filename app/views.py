@@ -555,6 +555,8 @@ def incomingmessage():
     if alert is None:
         alert = Alert()
         alert.number = number
+        alert.message = ""
+        alert.media = ""
     
     message = request.values.get('Body', None).lower()
     media = ""
@@ -581,6 +583,8 @@ def incomingmessage():
 
     if alert.message != "" and alert.media != "":
         searchPetsSMS(alert.message, alert.media)
+        alert.message = ""
+        alert.media = ""
         
     db.session.add(alert)
     db.session.commit()
@@ -622,7 +626,7 @@ def searchPetsSMS(message, media):
         anml_pets = Pet.query.filter(Pet.species == params[anmlstr], Pet.status == 'Lost').all()
         
     for animal in addr_pets:
-        if animal.species == params[anmlstr]:
+        if animal.species == params[anmlstr] and animal.status == "Lost":
             anml_pets.append(animal)
             
     anml_pets = list(set(anml_pets))
