@@ -343,11 +343,13 @@ def sendSMS(message="Your pet has been reported.", phone=""):
                                body = message)
 
 # Send MMS
-def sendMMS(message="Your pet has been reported.", phone="", picture=""):
+def sendMMS(message="Your pet has been reported.", phone="", picture="", imageflag=True):
     if picture == "" or picture == None:
-        picture = 'http://orange-collar.herokuapp.com/static/orangecollar.png'
+        image = 'http://orange-collar.herokuapp.com/static/orangecollar.png'
+    elif imageflag:
+        image = 'http://orange-collar.herokuapp.com/static/images/%s' % picture
     else:
-        picture = 'http://orange-collar.herokuapp.com/static/images/%s' % picture
+        image = picture
     
     if phone != "":
         account_sid = str(os.getenv('TWILIO_SID'))
@@ -358,7 +360,7 @@ def sendMMS(message="Your pet has been reported.", phone="", picture=""):
         client.messages.create(to = "+1%s" % phone,
                                from_ = local_phone,
                                body = message,
-                               media_url=[picture])
+                               media_url=[image])
 
 # Send Call
 def sendCall(pet, user, message="Your pet has been reported.", phone=""):
