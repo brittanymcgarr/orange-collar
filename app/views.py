@@ -583,6 +583,9 @@ def incomingmessage():
     if search:
         searchPetsSMS(alert.message, alert.media)
         
+    db.session.add(alert)
+    db.session.commit()
+        
     responder = MessagingResponse()
     responder.message(response)
     return str(responder)
