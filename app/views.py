@@ -547,14 +547,12 @@ def incomingcall():
 # lost pets
 @app.route('/incomingmessage', methods=['GET', 'POST'])
 def incomingmessage():
-#    number = request.values.get('From', None)
- #   number = number[2:]
     message = request.values.get('Body', None).lower()
-   # media = ""
+    media = ""
     
     # Just get the first image, if multiple
-    #if request.values.get('NumMedia', None) > 0:
-     #   media = request.form["MediaUrl0"]
+    if request.values.get('NumMedia', None) > 0:
+        media = request.form["MediaUrl0"]
         # Figure out if Twilio already prevents illicit images
         # Otherwise, implement through Google Cloud Vision
 
