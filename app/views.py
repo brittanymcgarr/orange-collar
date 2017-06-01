@@ -564,15 +564,14 @@ def incomingmessage():
     
     # Just get the first image, if multiple
     if request.values.get('NumMedia', None) > 0:
-        media = request.values.get('MediaUrl0', None)
-        alert.media = media
+        alert.media = request.values.get('MediaUrl0', None)
         # Figure out if Twilio already prevents illicit images
         # Otherwise, implement through Google Cloud Vision
 
     addrstr = u"address"
     
-    if alert.message is not None and message.find(addrstr) > -1:
-        if alert.time_issued is None or (alert.time_issued + datetime.timedelta(minutes = 5) < datetime.datetime.now()):
+    if alert.message is not None and alert.message.find(addrstr) > -1:
+        if alert.time_issued is None or (alert.time_issued + datetime.timedelta(minutes = 3) < datetime.datetime.now()):
             response = "Thank you for doing your part. The pet is being compared with our database of lost pets, and if an owner is matched, we will contact them shortly."
             alert.time_issued = datetime.datetime.now()
         else:
