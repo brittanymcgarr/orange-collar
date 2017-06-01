@@ -551,8 +551,8 @@ def incomingmessage():
     media = ""
     
     # Just get the first image, if multiple
-    if request.values.get('NumMedia', None) > 0:
-        media = request.form["MediaUrl0"]
+#    if request.values.get('NumMedia', None) > 0:
+#        media = request.values.get('MediaUrl0', None)
         # Figure out if Twilio already prevents illicit images
         # Otherwise, implement through Google Cloud Vision
 
