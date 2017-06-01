@@ -552,11 +552,11 @@ def incomingmessage():
     number = request.values.get('From', None)
     number = number[2:]
     
-    alert = Alert.query.filter(Alert.phone == str(number)).first() or None
+    alert = Alert.query.filter(Alert.number == str(number)).first() or None
     
     if alert is None:
         alert = Alert()
-        alert.phone = str(number)
+        alert.number = str(number)
         alert.message = ""
         alert.media = ""
     
