@@ -550,7 +550,11 @@ def incomingcall():
 @app.route('/incomingmessage', methods=['GET', 'POST'])
 def incomingmessage():
     number = request.values.get('From', None)
-    number = number[2:]
+    
+    if number is None:
+        number = "unknown"
+    else:
+        number = number[2:]
     
     alert = Alert.query.filter(Alert.phone == str(number)).first() or None
     
