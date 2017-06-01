@@ -592,19 +592,19 @@ def searchPetsSMS(message, media):
     anmlstr = "animal"
     addrstr = "address"
     
-    if addrstr in parameters.keys():
-        alert_message = "An animal was reported at %s, matching your lost pet\'s species." % parameters[addrstr]
-        coords = getSearchCoords(parameters[addrstr])
+    if addrstr in params.keys():
+        alert_message = "An animal was reported at %s, matching your lost pet\'s species." % params[addrstr]
+        coords = getSearchCoords(params[addrstr])
         addr_pets = getPetsByCoords(coords)
     else:
         # Want to limit this to helpful information
         return False
     
-    if anmlstr in parameters.keys():
-        anml_pets = Pet.query.filter(Pet.species == parameters[anmlstr], Pet.status == 'Lost').all()
+    if anmlstr in params.keys():
+        anml_pets = Pet.query.filter(Pet.species == params[anmlstr], Pet.status == 'Lost').all()
         
     for animal in addr_pets:
-        if animal.species == parameters[anmlstr]:
+        if animal.species == params[anmlstr]:
             anml_pets.append(animal)
             
     anml_pets = list(set(anml_pets))
