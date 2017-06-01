@@ -7,6 +7,8 @@
     <form action="{{ url_for('pet_profile', petID=pet.id) }}", method="POST", name="pet_profile">
         {{ form.hidden_tag() }}
         <p><input type="submit" value="Contact Owner"></p>
+        <p>You can also text an image of this animal to (415) 802-0474. 
+        <br>Text 'help' for instructions. Data rates from your provider may apply for this service.</p>
     </form>
     
     <div id="pet-picture">

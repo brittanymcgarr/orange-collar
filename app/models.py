@@ -1,4 +1,5 @@
 from app import db
+import datetime
 
 # User model
 class User(db.Model):
@@ -76,3 +77,14 @@ class Pet(db.Model):
     
     def __repr__(self):
         return '<Pet %r_%s>' % (self.name, self.id)
+        
+# Alert model
+class Alert(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    phone = db.Column(db.String(8), unique=True)
+    time_issued = db.Column(db.DateTime)
+    message = db.Column(db.String(1024), nullable=True)
+    media = db.Column(db.String(1024), nullable=True)
+    
+    def __repr__(self):
+        return '<Alert %s>' % self.phone

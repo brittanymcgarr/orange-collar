@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 from app import app, db, lm
 from .forms import (LoginForm, SignUpForm, ContactForm, NewPetForm, 
                     EditForm, ImageForm, LocationForm)
-from .models import User, Pet
+from .models import User, Pet, Alert
 
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
@@ -547,26 +547,41 @@ def incomingcall():
 # lost pets
 @app.route('/incomingmessage', methods=['GET', 'POST'])
 def incomingmessage():
+    number = request.values.get('From', None)
+    number = number[2:]
+    
+    alert = Alert.query.filter(Alert.phone == number).first() or None
+    
+    if alert is None:
+        alert = Alert()
+        alert.number = number
+    
     message = request.values.get('Body', None).lower()
     media = ""
     
+    if message != "":
+        alert.message = message
+    
     # Just get the first image, if multiple
-#    if request.values.get('NumMedia', None) > 0:
-#        media = request.values.get('MediaUrl0', None)
+    if request.values.get('NumMedia', None) > 0:
+        alert.media = request.values.get('MediaUrl0', None)
         # Figure out if Twilio already prevents illicit images
         # Otherwise, implement through Google Cloud Vision
 
     search = False
     addrstr = u"address"
     
-    if message is not None and message.find(addrstr) > -1:
-        response = "Thank you for doing your part. The pet is being compared with our database of lost pets, and if an owner is matched, we will contact them shortly."
+    if alert.message is not None and message.find(addrstr) > -1:
+        if alert.last_call is not None and (alert.last_call + datetime.timedelta(minutes = 5) < datetime.datetime.now()):
+            response = "Thank you for doing your part. The pet is being compared with our database of lost pets, and if an owner is matched, we will contact them shortly."
+        else:
+            response = "Thank you for doing your part!"
         search = True
     else:
         response = "Thank you for contacting Orange Collar. Text the street address and animal to report a sighted pet and include semi-colons. e.g. \'address:123 Example Street, San Francisco, CA; animal: Cat; description: Fluffy and black;\'. You can also include a picture. Thank you for doing your part!"
 
     if search:
-        searchPetsSMS(message, media)
+        searchPetsSMS(alert.message, alert.media)
         
     responder = MessagingResponse()
     responder.message(response)
