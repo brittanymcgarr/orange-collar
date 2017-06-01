@@ -544,8 +544,8 @@ def incomingcall():
         return redirect(url_for('index'))
 
 # Incoming MMS
-# Incoming MMS/SMS with image attachments should be forwarded to the appropriate
-# owner of the pet.
+# Incoming MMS/SMS with image attachments should be forwarded to the owners of 
+# lost pets
 @app.route('/incomingmessage', methods=['POST'])
 def incomingmessage():
     number = request.form['From']
@@ -615,7 +615,7 @@ def searchPetsSMS(message, media):
         return False
     
     if anmlstr in parameters.keys():
-        anml_pets.append(Pet.query.filter_by('species' == parameters[anmlstr] & 'status' == 'Lost'))
+        anml_pets.append(Pet.query.filter(Pet.species == parameters[anmlstr], Pet.status == 'Lost').all()
         
     for animal in addr_pets:
         if animal.species == parameters[anmlstr]:
