@@ -340,7 +340,6 @@ def sendSMS(message="Your pet has been reported.", phone=""):
         client.messages.create(to = "+1%s" % phone,
                                from_ = local_phone,
                                body = message)
-        time.sleep(1)
 
 # Send MMS
 def sendMMS(message="Your pet has been reported.", phone="", picture=""):
@@ -374,7 +373,6 @@ def sendCall(pet, user, message="Your pet has been reported.", phone=""):
         call = client.calls.create(to = "+1%s" % phone,
                                    from_ = local_phone,
                                    url = url)
-        time.sleep(1)
 
 # Create XML
 @app.route('/calltemplate.xml/<petID>', methods=['GET', 'POST'])
