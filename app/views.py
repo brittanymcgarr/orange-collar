@@ -570,7 +570,7 @@ def incomingmessage():
     search = False
     addrstr = u"address"
     
-    if message.find(addrstr):
+    if message.find(addrstr) > -1:
         response = "Thank you for doing your part. The pet is being compared with our database of lost pets, and if an owner is matched, we will contact them shortly."
         search = True
     else:
