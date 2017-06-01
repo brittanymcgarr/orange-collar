@@ -580,8 +580,7 @@ def incomingmessage():
         print "Entering Search"
         searchPetsSMS(message, media)
         
-    sendSMS(response, number)
-    return render_template('/incomingmessage.xml', message=response)
+    return Response(render_template('/incomingmessage.xml', message=response), mimetype='text/xml')
     
 # Search the Pets database for the message
 def searchPetsSMS(message, media):
