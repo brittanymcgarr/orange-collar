@@ -574,6 +574,7 @@ def incomingmessage():
         searchPetsSMS(message, media)
         
     sendSMS(response, number)
+    return redirect(url_for('index'))
     
 # Search the Pets database for the message
 def searchPetsSMS(message, media):
