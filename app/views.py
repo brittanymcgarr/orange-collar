@@ -218,7 +218,7 @@ def editpet(petID):
         if g.user.is_authenticated and pet is not None:
             if form.validate_on_submit():
                 pet.name = form.name.data
-                pet.species = form.species.data
+                pet.species = form.species.data.lower()
                 pet.color = form.color.data
                 pet.breed = form.breed.data
                 pet.gender = form.gender.data
@@ -560,10 +560,9 @@ def incomingmessage():
         alert.message = ""
         alert.media = ""
     
-    message = request.values.get('Body', None).lower()
-    media = ""
+    message = request.values.get('Body', None).strip().lower()
     
-    if message != None:
+    if message != None and message != "":
         alert.message = message
     
     # Just get the first image, if multiple
@@ -574,7 +573,7 @@ def incomingmessage():
 
     addrstr = u"address"
     
-    if alert.message != "" and alert.message.find(addrstr) > -1 and alert.media != "":
+    if alert.message != "" and alert.message.find(addrstr) > -1:
         if alert.time_issued is None or (alert.time_issued + datetime.timedelta(minutes = 3) < datetime.datetime.now()):
             response = "Thank you for doing your part. The pet is being compared with our database of lost pets, and if an owner is matched, we will contact them shortly."
             alert.time_issued = datetime.datetime.now()
