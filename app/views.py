@@ -465,12 +465,12 @@ def getSearchCoords(address=""):
     return coords
     
 # Get the nearest pets by coordinates
-def getPetsByCoords(coords):
+def getPetsByCoords(coords, precision=1.0):
     if 'lat' in coords.keys() and 'long' in coords.keys():
-        pets = Pet.query.filter((Pet.home_lat_coord >= (coords['lat'] - 0.1)) &
-                                (Pet.home_lat_coord <= (coords['lat'] + 0.1)) &
-                                (Pet.home_long_coord >= (coords['long'] - 0.1)) &
-                                (Pet.home_long_coord <= (coords['long'] + 0.1))).all()
+        pets = Pet.query.filter((Pet.home_lat_coord >= (coords['lat'] - (0.1 * precision))) &
+                                (Pet.home_lat_coord <= (coords['lat'] + (0.1 * precision))) &
+                                (Pet.home_long_coord >= (coords['long'] - (0.1 * precision))) &
+                                (Pet.home_long_coord <= (coords['long'] + (0.1 * precision)))).all()
         
         return pets
     else:
@@ -619,7 +619,7 @@ def searchPetsSMS(message, media):
     if addrstr in params.keys():
         alert_message = "An animal was reported at %s, matching your lost pet\'s species." % (params[addrstr].upper())
         coords = getSearchCoords(params[addrstr])
-        addr_pets = getPetsByCoords(coords)
+        addr_pets = getPetsByCoords(coords, precision=5)
     else:
         # Want to limit this to helpful information
         return False
