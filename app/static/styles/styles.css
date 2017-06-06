@@ -23,6 +23,7 @@ body {
 }
 
 #menu {
+    min-height: 40px;
     height: 5%;
     width: 100%;
     margin: 0px;
@@ -44,6 +45,7 @@ body {
     margin: 0px;
     border: 0px;
     padding-top: 10px;
+    padding-bottom: 10px;
     padding-left: 20px;
     padding-right: 20px;
     background-color: #F7B733;
@@ -55,6 +57,7 @@ body {
 }
 
 #menu a {
+    padding: 0px;
     text-decoration: none;
     font-size: 20px;
     font-weight: bold;
@@ -118,12 +121,6 @@ input[type=password] {
     border:2px solid #ccc; 
     -webkit-border-radius: 5px;
     border-radius: 5px;   
-}
-
-input[type=email] {
-    padding: 5px;
-    border: 2px solid #CCCCCC;
-    border-radius: 5px;
 }
 
 input[type=submit] {
