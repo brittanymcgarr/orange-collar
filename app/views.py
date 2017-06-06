@@ -582,7 +582,8 @@ def incomingmessage():
     else:
         response = "Thank you for contacting Orange Collar. Text the street address and animal to report a sighted pet and include semi-colons. e.g. \'address:123 Example Street, San Francisco, CA; animal: Cat; description: Fluffy and black;\'. You can also include a picture. Thank you for doing your part!"
 
-    if alert.message != "" and alert.media != "":
+    if ((alert.media != "" and alert.media is not None) and 
+        (alert.message != "" and alert.message is not None)):
         searchPetsSMS(alert.message, alert.media)
         alert.message = ""
         alert.media = ""
@@ -643,7 +644,7 @@ def contactUser(user_id, pet, message, media=""):
     user = User.query.get(user_id)
     
     if user.allow_mms:
-        sendMMS(message=message, phone=user.primary_phone, picture=media)
+        sendMMS(message=message, phone=user.primary_phone, picture=media, imageflag=False)
     if not user.allow_mms and user.allow_sms:
         sendSMS(message=message, phone=user.primary_phone)
     if user.allow_voice:
