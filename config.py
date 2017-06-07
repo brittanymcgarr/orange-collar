@@ -20,4 +20,7 @@ IMAGES_DIR = os.path.join(STATIC_DIR, 'images')
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 GOOGLEMAPS_KEY = os.environ.get('GOOG_KEY')
+
 FLASKS3_BUCKET_NAME = 'orange-collar'
+AWS_SECRET_ACCESS_KEY = str(os.getenv('AWS_SECRET_ACCESS_KEY'))
+AWS_ACCESS_KEY_ID = str(os.getenv('AWS_ACCESS_KEY_ID'))
