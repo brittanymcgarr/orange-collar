@@ -11,8 +11,7 @@ from config import base_directory, GOOGLEMAPS_KEY
 app = Flask(__name__)
 app.config.from_object('config')
 
-s3 = FlaskS3()
-s3.init_app(app)
+s3 = FlaskS3(app)
 
 db = SQLAlchemy(app)
 
