@@ -20,3 +20,4 @@ IMAGES_DIR = os.path.join(STATIC_DIR, 'images')
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 GOOGLEMAPS_KEY = os.environ.get('GOOG_KEY')
+FLASKS3_BUCKET_NAME = 'orange-collar'
