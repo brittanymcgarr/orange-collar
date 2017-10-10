@@ -375,6 +375,7 @@ def sendCall(pet, user, message="Your pet has been reported.", phone=""):
         client = Client(account_sid, auth_token)
         call = client.calls.create(to = "+1%s" % phone,
                                    from_ = local_phone,
+                                   machine_detection = "Enable",
                                    url = url)
 
 # Create XML
